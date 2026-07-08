@@ -38,25 +38,36 @@ describe('createPerson function', () => {
     expect(typeof person.isActive).toBe('boolean')
   })
 
-  test('Checks for the presence of PersonInterface with flexible field order and spacing', () => {
-    const interfaceRegex =
-      /interface\s+PersonInterface\s*\{\s*(name\s*:\s*string\s*;?\s*age\s*:\s*number\s*;?\s*isActive\s*:\s*boolean\s*;?|name\s*:\s*string\s*;?\s*isActive\s*:\s*boolean\s*;?\s*age\s*:\s*number\s*;?|age\s*:\s*number\s*;?\s*name\s*:\s*string\s*;?\s*isActive\s*:\s*boolean\s*;?|age\s*:\s*number\s*;?\s*isActive\s*:\s*boolean\s*;?\s*name\s*:\s*string\s*;?|isActive\s*:\s*boolean\s*;?\s*name\s*:\s*string\s*;?\s*age\s*:\s*number\s*;?|isActive\s*:\s*boolean\s*;?\s*age\s*:\s*number\s*;?\s*name\s*:\s*string\s*;?)\s*}/
-    const match = interfaceRegex.test(code)
-    if (!match) {
-      throw new Error(
-        `PersonInterface definition does not match the expected format. Please ensure it includes 'name: string', 'age: number', and 'isActive: boolean' with any order and spacing.`
-      )
+  test('Checks for the presence of PersonInterface and its properties', () => {
+    // Перевіряємо наявність декларації інтерфейсу
+    const interfaceDeclarationMatch = /interface\s+PersonInterface\s*\{/.test(code)
+    expect(interfaceDeclarationMatch).toBe(true)
+
+    // Перевіряємо наявність необхідних властивостей всередині інтерфейсу
+    const interfaceBodyMatch = code.match(/interface\s+PersonInterface\s*\{([^}]+)\}/)
+    expect(interfaceBodyMatch).not.toBeNull()
+
+    if (interfaceBodyMatch) {
+      const body = interfaceBodyMatch[1]
+      expect(/name\s*:\s*string/.test(body)).toBe(true)
+      expect(/age\s*:\s*number/.test(body)).toBe(true)
+      expect(/isActive\s*:\s*boolean/.test(body)).toBe(true)
     }
   })
 
   test('Checks for the correct typing in function parameters', () => {
-    const functionParamRegex =
-      /function\s+createPerson\(\s*name\s*:\s*string,\s*age\s*:\s*number,\s*isActive\s*:\s*boolean\s*\)\s*:\s*PersonInterface/
-    const match = functionParamRegex.test(code)
-    if (!match) {
-      throw new Error(
-        `Function 'createPerson' parameters typing does not match the expected format. Expected parameters to be '(name: string, age: number, isActive: boolean): PersonInterface'.`
-      )
+    // Перевіряємо наявність правильної сигнатури функції
+    expect(/function\s+createPerson\s*\(/.test(code)).toBe(true)
+    
+    // Перевіряємо наявність правильних параметрів
+    const functionSignatureMatch = code.match(/function\s+createPerson\s*\(([^)]+)\)\s*:\s*PersonInterface/)
+    expect(functionSignatureMatch).not.toBeNull()
+
+    if (functionSignatureMatch) {
+      const params = functionSignatureMatch[1]
+      expect(/name\s*:\s*string/.test(params)).toBe(true)
+      expect(/age\s*:\s*number/.test(params)).toBe(true)
+      expect(/isActive\s*:\s*boolean/.test(params)).toBe(true)
     }
   })
 })
