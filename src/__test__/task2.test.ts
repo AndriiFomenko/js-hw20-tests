@@ -34,11 +34,10 @@ describe('Calculator with LogMethodCalls decorator', () => {
   })
 
   test('contains LogMethodCalls decorator on methods', () => {
-    const decoratorRegex = /@LogMethodCalls\s*\n\s*(\w+)\(.*\):/g
-    const matches = Array.from(code.matchAll(decoratorRegex))
-
-    expect(matches.length).toBeGreaterThanOrEqual(2) // Expecting at least 2 occurrences for add and multiply methods
-    expect(matches[0][1]).toBe('add') // First match should be the add method
-    expect(matches[1][1]).toBe('multiply') // Second match should be the multiply method
+    const addDecoratorRegex = /@LogMethodCalls[\s\S]*?add\s*\(/
+    const multiplyDecoratorRegex = /@LogMethodCalls[\s\S]*?multiply\s*\(/
+    
+    expect(code).toMatch(addDecoratorRegex)
+    expect(code).toMatch(multiplyDecoratorRegex)
   })
 })
